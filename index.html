@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Kalpli Patlayan Sürpriz</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: radial-gradient(circle at center, #111, #000);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      font-family: "Poppins", sans-serif;
+    }
+
+    .box {
+      width: 200px;
+      height: 200px;
+      background: #ff4d6d;
+      border-radius: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 0 25px rgba(255, 77, 109, 0.6);
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+      z-index: 10;
+    }
+
+    .text {
+      font-weight: bold;
+      color: white;
+      font-size: 22px;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .center-img {
+      position: absolute;
+      width: 0;
+      height: 0;
+      opacity: 0;
+      border-radius: 16px;
+      transition: all 0.8s ease;
+      z-index: 5;
+    }
+
+    .center-img.show {
+      width: 300px;
+      height: 300px;
+      opacity: 1;
+      box-shadow: 0 0 40px rgba(255, 77, 109, 0.8);
+    }
+
+    .particle, .heart {
+      position: absolute;
+      pointer-events: none;
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0);
+      animation: explode 1.5s ease-out forwards;
+    }
+
+    .particle {
+      border-radius: 8px;
+    }
+
+    .heart {
+      font-size: 24px;
+      color: #ff4d6d;
+    }
+
+    @keyframes explode {
+      0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(0);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(var(--x), var(--y)) scale(1.5);
+      }
+    }
+
+    .hidden {
+      opacity: 0;
+      transform: scale(0);
+    }
+  </style>
+</head>
+<body>
+  <div class="box" id="box">
+    <div class="text">🎁 Sürprizi Aç</div>
+  </div>
+
+  <img src="kagantorun.jpg" class="center-img" id="centerImg" alt="Fotoğraf">
+
+  <script>
+    const box = document.getElementById("box");
+    const body = document.body;
+    const centerImg = document.getElementById("centerImg");
+
+    box.addEventListener("click", () => {
+      // Fotoğraf ortada belirsin
+      centerImg.classList.add("show");
+
+      // partiküller (foto küçükleri + kalpler)
+      for (let i = 0; i < 25; i++) {
+        const particle = document.createElement("img");
+        particle.src = "kagantorun.jpg";
+        particle.classList.add("particle");
+
+        const angle = Math.random() * Math.PI * 2;
+        const distance = 200 + Math.random() * 300;
+        const x = Math.cos(angle) * distance + "px";
+        const y = Math.sin(angle) * distance + "px";
+        particle.style.setProperty("--x", x);
+        particle.style.setProperty("--y", y);
+
+        const size = 30 + Math.random() * 30;
+        particle.style.width = size + "px";
+        particle.style.height = size + "px";
+
+        const rect = box.getBoundingClientRect();
+        particle.style.left = rect.left + rect.width / 2 + "px";
+        particle.style.top = rect.top + rect.height / 2 + "px";
+
+        body.appendChild(particle);
+        particle.addEventListener("animationend", () => particle.remove());
+      }
+
+      // kalp partikülleri
+      for (let i = 0; i < 15; i++) {
+        const heart = document.createElement("div");
+        heart.textContent = "❤️";
+        heart.classList.add("heart");
+
+        const angle = Math.random() * Math.PI * 2;
+        const distance = 150 + Math.random() * 300;
+        const x = Math.cos(angle) * distance + "px";
+        const y = Math.sin(angle) * distance + "px";
+        heart.style.setProperty("--x", x);
+        heart.style.setProperty("--y", y);
+
+        const rect = box.getBoundingClientRect();
+        heart.style.left = rect.left + rect.width / 2 + "px";
+        heart.style.top = rect.top + rect.height / 2 + "px";
+
+        body.appendChild(heart);
+        heart.addEventListener("animationend", () => heart.remove());
+      }
+
+      // kutu kaybolsun
+      box.classList.add("hidden");
+      setTimeout(() => box.remove(), 500);
+    });
+  </script>
+</body>
+</html>
